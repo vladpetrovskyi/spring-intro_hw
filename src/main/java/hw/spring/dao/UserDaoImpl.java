@@ -3,6 +3,7 @@ package hw.spring.dao;
 import hw.spring.exception.DataProcessingException;
 import hw.spring.model.User;
 import java.util.List;
+import java.util.Optional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -44,6 +45,15 @@ public class UserDaoImpl implements UserDao {
         try (Session session = sessionFactory.openSession()) {
             Query<User> query = session.createQuery("from User", User.class);
             return query.list();
+        } catch (Exception e) {
+            throw new DataProcessingException("Could not get list of users from DB.", e);
+        }
+    }
+
+    @Override
+    public Optional<User> getById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return Optional.ofNullable(session.get(User.class, id));
         } catch (Exception e) {
             throw new DataProcessingException("Could not get list of users from DB.", e);
         }
