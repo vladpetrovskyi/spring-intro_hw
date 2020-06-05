@@ -1,8 +1,7 @@
 package hw.spring.controllers;
 
-import hw.spring.exception.DataProcessingException;
+import hw.spring.dto.UserResponseDto;
 import hw.spring.model.User;
-import hw.spring.model.UserResponseDto;
 import hw.spring.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,22 +35,17 @@ public class UserController {
 
     @GetMapping(value = "/{userId}")
     public UserResponseDto get(@PathVariable Long userId) {
-        User user = userService.listUsers()
-                .stream()
-                .filter(u -> u.getId().equals(userId))
-                .findFirst().orElseThrow(() ->
-                        new DataProcessingException("No user found with given ID."));
-        return dtoFromUser(user);
+        return getDtoFromUser(userService.getById(userId));
     }
 
     @GetMapping(value = "/")
     public List<UserResponseDto> getAll() {
         return userService.listUsers().stream()
-                .map(this::dtoFromUser)
+                .map(this::getDtoFromUser)
                 .collect(Collectors.toList());
     }
 
-    private UserResponseDto dtoFromUser(User user) {
+    private UserResponseDto getDtoFromUser(User user) {
         UserResponseDto userResponseDto = new UserResponseDto();
         userResponseDto.setAge(user.getAge());
         userResponseDto.setName(user.getName());
